@@ -10,13 +10,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import WebDriverException, TimeoutException
 
 
-def fetch_page(url, delay=5, headless=True, fetch_content=False):
+def fetch_page(url, delay=3, headless=True, fetch_content=False):
     """
     Fetch information from a webpage after following redirects and allowing time for JS to load.
     
     Args:
         url: The URL to fetch
-        delay: Time in seconds to wait for page to load (default: 5)
+        delay: Time in seconds to wait for page to load (default: 3)
         headless: Whether to run browser in headless mode (default: True)
         fetch_content: Whether to fetch the entire page content (default: False)
     
@@ -73,13 +73,13 @@ def main():
     parser.add_argument(
         '--delay',
         type=float,
-        default=5.0,
-        help='Time in seconds to wait for page to load (default: 5)'
+        default=3.0,
+        help='Time in seconds to wait for page to load (default: 3.0)'
     )
     parser.add_argument(
         '--show-browser',
         action='store_true',
-        help='Show the browser window (default: headless mode)'
+        help='Show the browser window (default: False)'
     )
     parser.add_argument(
         '--json',
@@ -89,7 +89,7 @@ def main():
     parser.add_argument(
         '--fetch-content',
         action='store_true',
-        help='Fetch the entire page content (HTML source)'
+        help='Fetch the entire page content (default: False)'
     )
     
     args = parser.parse_args()
