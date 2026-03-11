@@ -18,12 +18,14 @@
         fetch-title = pkgs.writeScriptBin "fetch-title" ''
           #!${pkgs.bash}/bin/bash
           export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
+          export PYTHONPATH="$PYTHONPATH:${./.}"
           exec ${pythonEnv}/bin/python ${./fetch_title.py} "$@"
         '';
         
         run-tests = pkgs.writeScriptBin "run-tests" ''
           #!${pkgs.bash}/bin/bash
           export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
+          export PYTHONPATH="$PYTHONPATH:${./.}"
           exec ${pythonEnv}/bin/python ${./test_fetch_title.py} "$@"
         '';
         
@@ -55,6 +57,7 @@
             ];
           } ''
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
+            export PYTHONPATH="$PYTHONPATH:${./.}"
             cp ${./fetch_title.py} fetch_title.py
             cp ${./test_fetch_title.py} test_fetch_title.py
             ${pythonEnv}/bin/python test_fetch_title.py
@@ -71,6 +74,7 @@
           
           shellHook = ''
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
+            export PYTHONPATH="$PYTHONPATH:${./.}"
             echo "Selenium environment ready!"
             echo "Run: python fetch_title.py <url>"
             echo "Test: python test_fetch_title.py"
