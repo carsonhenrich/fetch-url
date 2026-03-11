@@ -15,32 +15,32 @@
           selenium
         ]);
         
-        fetch-title = pkgs.writeScriptBin "fetch-title" ''
+        fetch-url = pkgs.writeScriptBin "fetch-url" ''
           #!${pkgs.bash}/bin/bash
           export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
           export PYTHONPATH="$PYTHONPATH:${./.}"
-          exec ${pythonEnv}/bin/python ${./fetch_title.py} "$@"
+          exec ${pythonEnv}/bin/python ${./fetch_url.py} "$@"
         '';
         
         run-tests = pkgs.writeScriptBin "run-tests" ''
           #!${pkgs.bash}/bin/bash
           export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
           export PYTHONPATH="$PYTHONPATH:${./.}"
-          exec ${pythonEnv}/bin/python ${./test_fetch_title.py} "$@"
+          exec ${pythonEnv}/bin/python ${./test_fetch_url.py} "$@"
         '';
         
       in
       {
         packages = {
-          default = fetch-title;
-          fetch-title = fetch-title;
+          default = fetch-url;
+          fetch-url = fetch-url;
           tests = run-tests;
         };
 
         apps = {
           default = {
             type = "app";
-            program = "${fetch-title}/bin/fetch-title";
+            program = "${fetch-url}/bin/fetch-url";
           };
           tests = {
             type = "app";
@@ -49,7 +49,7 @@
         };
 
         checks = {
-          tests = pkgs.runCommand "fetch-title-tests" {
+          tests = pkgs.runCommand "fetch-url-tests" {
             buildInputs = [
               pythonEnv
               pkgs.chromium
@@ -58,9 +58,9 @@
           } ''
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
             export PYTHONPATH="$PYTHONPATH:${./.}"
-            cp ${./fetch_title.py} fetch_title.py
-            cp ${./test_fetch_title.py} test_fetch_title.py
-            ${pythonEnv}/bin/python test_fetch_title.py
+            cp ${./fetch_url.py} fetch_url.py
+            cp ${./test_fetch_url.py} test_fetch_url.py
+            ${pythonEnv}/bin/python test_fetch_url.py
             touch $out
           '';
         };
@@ -70,7 +70,7 @@
             pythonEnv
             pkgs.chromium
             pkgs.chromedriver
-            fetch-title
+            fetch-url
             run-tests
           ];
           
@@ -78,8 +78,8 @@
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
             export PYTHONPATH="$PYTHONPATH:${./.}"
             echo "Selenium environment ready!"
-            echo "Run: python fetch_title.py <url>"
-            echo "Test: python test_fetch_title.py"
+            echo "Run: python fetch_url.py <url>"
+            echo "Test: python test_fetch_url.py"
           '';
         };
       }

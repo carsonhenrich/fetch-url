@@ -1,4 +1,4 @@
-# Fetch Title
+# Fetch URL
 
 A Python script that uses Selenium to fetch webpage titles after following redirects and allowing JavaScript to load. Built with Nix for reproducible environments.
 
@@ -21,14 +21,14 @@ This project uses Nix flakes. Make sure you have Nix installed with flakes enabl
 Run directly without installation:
 
 ```bash
-nix run github:yourusername/fetch-title -- https://example.com
+nix run github:yourusername/fetch-url -- https://example.com
 ```
 
 Or clone and run locally:
 
 ```bash
 git clone <repository-url>
-cd fetch-title
+cd fetch-url
 nix run . -- https://example.com
 ```
 
@@ -51,7 +51,7 @@ This provides Python with Selenium, Chromium, and ChromeDriver.
 nix run . -- https://example.com
 
 # Or in dev shell
-python fetch_title.py https://example.com
+python fetch_url.py https://example.com
 ```
 
 ### Command-Line Options
@@ -120,7 +120,7 @@ nix run .#tests
 nix flake check
 
 # In dev shell
-python test_fetch_title.py
+python test_fetch_url.py
 ```
 
 ### Test Coverage
@@ -141,8 +141,8 @@ The test suite includes:
 
 ```
 .
-├── fetch_title.py       # Main script
-├── test_fetch_title.py  # Unit tests
+├── fetch_url.py         # Main script
+├── test_fetch_url.py    # Unit tests
 ├── flake.nix           # Nix flake configuration
 ├── flake.lock          # Locked dependencies
 ├── README.md           # This file
@@ -156,16 +156,16 @@ The test suite includes:
    nix develop
    ```
 
-2. Make your changes to `fetch_title.py`
+2. Make your changes to `fetch_url.py`
 
 3. Run tests:
    ```bash
-   python test_fetch_title.py
+   python test_fetch_url.py
    ```
 
 4. Test the script:
    ```bash
-   python fetch_title.py https://example.com
+   python fetch_url.py https://example.com
    ```
 
 5. Run flake checks before committing:
@@ -176,8 +176,8 @@ The test suite includes:
 ### Adding New Features
 
 When adding new features:
-1. Update `fetch_title.py` with the new functionality
-2. Add corresponding tests in `test_fetch_title.py`
+1. Update `fetch_url.py` with the new functionality
+2. Add corresponding tests in `test_fetch_url.py`
 3. Update this README with usage examples
 4. Run `nix flake check` to ensure tests pass
 

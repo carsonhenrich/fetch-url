@@ -5,13 +5,13 @@ import json
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
-from fetch_title import fetch_page
+from fetch_url import fetch_page
 
 
 class TestFetchPage(unittest.TestCase):
     """Test the fetch_page function with mocked Selenium"""
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_basic_fetch(self, mock_chrome):
         """Test basic page fetching"""
         mock_driver = MagicMock()
@@ -26,7 +26,7 @@ class TestFetchPage(unittest.TestCase):
         self.assertNotIn('content', result)
         mock_driver.quit.assert_called_once()
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_fetch_with_content(self, mock_chrome):
         """Test fetching page with content"""
         mock_driver = MagicMock()
@@ -43,7 +43,7 @@ class TestFetchPage(unittest.TestCase):
         self.assertEqual(result['content'], '<html><body>Test</body></html>')
         mock_driver.quit.assert_called_once()
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_redirect_handling(self, mock_chrome):
         """Test that redirects are followed"""
         mock_driver = MagicMock()
@@ -58,7 +58,7 @@ class TestFetchPage(unittest.TestCase):
         mock_driver.get.assert_called_once_with('https://example.com/redirect')
         mock_driver.quit.assert_called_once()
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_headless_option(self, mock_chrome):
         """Test headless mode configuration"""
         mock_driver = MagicMock()
@@ -81,7 +81,7 @@ class TestFetchPage(unittest.TestCase):
         options = call_args.kwargs['options']
         self.assertNotIn('--headless', options.arguments)
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_driver_cleanup_on_error(self, mock_chrome):
         """Test that driver is properly cleaned up on error"""
         mock_driver = MagicMock()
@@ -93,7 +93,7 @@ class TestFetchPage(unittest.TestCase):
         
         mock_driver.quit.assert_called_once()
     
-    @patch('fetch_title.webdriver.Chrome')
+    @patch('fetch_url.webdriver.Chrome')
     def test_empty_title(self, mock_chrome):
         """Test handling of pages with empty titles"""
         mock_driver = MagicMock()
@@ -110,8 +110,8 @@ class TestFetchPage(unittest.TestCase):
 class TestCLI(unittest.TestCase):
     """Test the command-line interface"""
     
-    @patch('fetch_title.fetch_page')
-    @patch('sys.argv', ['fetch_title.py', 'https://example.com'])
+    @patch('fetch_url.fetch_page')
+    @patch('sys.argv', ['fetch_url.py', 'https://example.com'])
     def test_basic_cli(self, mock_fetch):
         """Test basic CLI usage"""
         mock_fetch.return_value = {
@@ -119,14 +119,14 @@ class TestCLI(unittest.TestCase):
             'title': 'Example'
         }
         
-        from fetch_title import main
+        from fetch_url import main
         with patch('builtins.print') as mock_print:
             main()
             mock_fetch.assert_called_once()
             self.assertTrue(any('Final URL' in str(call) for call in mock_print.call_args_list))
     
-    @patch('fetch_title.fetch_page')
-    @patch('sys.argv', ['fetch_title.py', 'example.com'])
+    @patch('fetch_url.fetch_page')
+    @patch('sys.argv', ['fetch_url.py', 'example.com'])
     def test_url_scheme_addition(self, mock_fetch):
         """Test that https:// is added to URLs without scheme"""
         mock_fetch.return_value = {
@@ -134,15 +134,15 @@ class TestCLI(unittest.TestCase):
             'title': 'Example'
         }
         
-        from fetch_title import main
+        from fetch_url import main
         with patch('builtins.print'):
             main()
             # Check that the URL passed to fetch_page has https://
             call_args = mock_fetch.call_args
             self.assertTrue(call_args[0][0].startswith('https://'))
     
-    @patch('fetch_title.fetch_page')
-    @patch('sys.argv', ['fetch_title.py', 'https://example.com', '--json'])
+    @patch('fetch_url.fetch_page')
+    @patch('sys.argv', ['fetch_url.py', 'https://example.com', '--json'])
     def test_json_output(self, mock_fetch):
         """Test JSON output format"""
         mock_fetch.return_value = {
@@ -150,7 +150,7 @@ class TestCLI(unittest.TestCase):
             'title': 'Example'
         }
         
-        from fetch_title import main
+        from fetch_url import main
         with patch('builtins.print') as mock_print:
             main()
             # Check that JSON was printed
@@ -158,8 +158,8 @@ class TestCLI(unittest.TestCase):
             self.assertIn('final_url', output)
             self.assertIn('title', output)
     
-    @patch('fetch_title.fetch_page')
-    @patch('sys.argv', ['fetch_title.py', 'https://example.com', '--fetch-content'])
+    @patch('fetch_url.fetch_page')
+    @patch('sys.argv', ['fetch_url.py', 'https://example.com', '--fetch-content'])
     def test_fetch_content_flag(self, mock_fetch):
         """Test --fetch-content flag"""
         mock_fetch.return_value = {
@@ -168,7 +168,7 @@ class TestCLI(unittest.TestCase):
             'content': '<html></html>'
         }
         
-        from fetch_title import main
+        from fetch_url import main
         with patch('builtins.print'):
             main()
             # Check that fetch_content=True was passed
