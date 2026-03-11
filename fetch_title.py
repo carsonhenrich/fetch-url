@@ -1,7 +1,7 @@
-
 #!/usr/bin/env python3
 
 import argparse
+import json
 import sys
 import time
 from selenium import webdriver
@@ -10,17 +10,22 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import WebDriverException, TimeoutException
 
 
-def fetch_title(url, delay=5, headless=True):
+def fetch_page(url, delay=5, headless=True, fetch_content=False):
     """
-    Fetch the title of a webpage after following redirects and allowing time for JS to load.
+    Fetch information from a webpage after following redirects and allowing time for JS to load.
     
     Args:
         url: The URL to fetch
         delay: Time in seconds to wait for page to load (default: 5)
         headless: Whether to run browser in headless mode (default: True)
+        fetch_content: Whether to fetch the entire page content (default: False)
     
     Returns:
-        tuple: (final_url, title)
+        dict: {
+            'final_url': str,
+            'title': str,
+            'content': str (optional, if fetch_content=True)
+        }
     """
     chrome_options = Options()
     
@@ -39,10 +44,15 @@ def fetch_title(url, delay=5, headless=True):
         # Wait for the specified delay to allow JS to execute
         time.sleep(delay)
         
-        final_url = driver.current_url
-        title = driver.title
+        result = {
+            'final_url': driver.current_url,
+            'title': driver.title
+        }
         
-        return final_url, title
+        if fetch_content:
+            result['content'] = driver.page_source
+        
+        return result
         
     except WebDriverException as e:
         print(f"Error: Failed to fetch URL: {e}", file=sys.stderr)
@@ -71,6 +81,16 @@ def main():
         action='store_true',
         help='Show the browser window (default: headless mode)'
     )
+    parser.add_argument(
+        '--json',
+        action='store_true',
+        help='Output results as JSON'
+    )
+    parser.add_argument(
+        '--fetch-content',
+        action='store_true',
+        help='Fetch the entire page content (HTML source)'
+    )
     
     args = parser.parse_args()
     
@@ -81,10 +101,16 @@ def main():
     
     headless = not args.show_browser
     
-    final_url, title = fetch_title(url, delay=args.delay, headless=headless)
+    result = fetch_page(url, delay=args.delay, headless=headless, fetch_content=args.fetch_content)
     
-    print(f"Final URL: {final_url}")
-    print(f"Title: {title}")
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"Final URL: {result['final_url']}")
+        print(f"Title: {result['title']}")
+        if args.fetch_content:
+            print(f"\nContent ({len(result['content'])} characters):")
+            print(result['content'])
 
 
 if __name__ == '__main__':
