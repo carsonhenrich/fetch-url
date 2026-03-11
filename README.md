@@ -21,13 +21,13 @@ This project uses Nix flakes. Make sure you have Nix installed with flakes enabl
 Run directly without installation:
 
 ```bash
-nix run github:yourusername/fetch-url -- https://example.com
+nix run github:carsonhenrich/fetch-url -- https://example.com
 ```
 
 Or clone and run locally:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/carsonhenrich/fetch-url.git
 cd fetch-url
 nix run . -- https://example.com
 ```
@@ -57,7 +57,7 @@ python fetch_url.py https://example.com
 ### Command-Line Options
 
 ```bash
-# Specify custom delay (default: 5 seconds)
+# Specify custom delay (default: 3 seconds)
 nix run . -- https://example.com --delay 10
 
 # Show browser window instead of headless mode
@@ -70,7 +70,7 @@ nix run . -- https://example.com --json
 nix run . -- https://example.com --fetch-content
 
 # Combine options
-nix run . -- https://example.com --json --fetch-content --delay 3
+nix run . -- https://example.com --json --fetch-content --delay 5
 ```
 
 ### Examples
@@ -224,9 +224,7 @@ If pages are timing out or not loading properly, increase the delay:
 nix run . -- https://slow-site.com --delay 15
 ```
 
-## License
-
-[Your License Here]
+## [License](./LICENSE)
 
 ## Contributing
 

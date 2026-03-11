@@ -1,5 +1,5 @@
 {
-  description = "A Python script to fetch page titles using Selenium";
+  description = "A Python script to fetch url page titles and content using Selenium";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
