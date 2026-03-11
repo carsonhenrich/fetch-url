@@ -70,6 +70,8 @@
             pythonEnv
             pkgs.chromium
             pkgs.chromedriver
+            fetch-title
+            run-tests
           ];
           
           shellHook = ''
