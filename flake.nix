@@ -30,32 +30,32 @@
         '';
         
       in
-      {
-        packages = {
-          default = fetch-url;
-          fetch-url = fetch-url;
-          tests = run-tests;
-        };
-
-        apps = {
-          default = {
-            type = "app";
-            program = "${fetch-url}/bin/fetch-url";
+        {
+          packages = {
+            default = fetch-url;
+            fetch-url = fetch-url;
+            tests = run-tests;
           };
-          tests = {
-            type = "app";
-            program = "${run-tests}/bin/run-tests";
-          };
-        };
 
-        checks = {
-          tests = pkgs.runCommand "fetch-url-tests" {
-            buildInputs = [
-              pythonEnv
-              pkgs.chromium
-              pkgs.chromedriver
-            ];
-          } ''
+          apps = {
+            default = {
+              type = "app";
+              program = "${fetch-url}/bin/fetch-url";
+            };
+            tests = {
+              type = "app";
+              program = "${run-tests}/bin/run-tests";
+            };
+          };
+
+          checks = {
+            tests = pkgs.runCommand "fetch-url-tests" {
+              buildInputs = [
+                pythonEnv
+                pkgs.chromium
+                pkgs.chromedriver
+              ];
+            } ''
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
             export PYTHONPATH="$PYTHONPATH:${./.}"
             cp ${./fetch_url.py} fetch_url.py
@@ -63,25 +63,42 @@
             ${pythonEnv}/bin/python test_fetch_url.py
             touch $out
           '';
-        };
+          };
 
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pythonEnv
-            pkgs.chromium
-            pkgs.chromedriver
-            fetch-url
-            run-tests
-          ];
-          
-          shellHook = ''
+          devShells.default = pkgs.mkShell {
+            buildInputs = [
+              pythonEnv
+              pkgs.chromium
+              pkgs.chromedriver
+              fetch-url
+              run-tests
+            ];
+            
+            shellHook = ''
             export PATH="${pkgs.chromium}/bin:${pkgs.chromedriver}/bin:$PATH"
             export PYTHONPATH="$PYTHONPATH:${./.}"
             echo "Selenium environment ready!"
             echo "Run: python fetch_url.py <url>"
             echo "Test: python test_fetch_url.py"
           '';
-        };
-      }
-    );
+          };
+        }
+    )  // {                                                                                                                                  
+      overlays.default = final: prev: {                                                                                                     
+        fetch-url = final.callPackage ({ writeScriptBin, bash, chromium, chromedriver, python3 }:                                           
+          let                                                                                                                               
+            pythonEnv = python3.withPackages (ps: with ps; [                                                                                
+              selenium                                                                                                                      
+            ]);                                                                                                                             
+          in                                                                                                                                
+            writeScriptBin "fetch-url" ''                                                                                                     
+           #!${bash}/bin/bash                                                                                                              
+           export PATH="${chromium}/bin:${chromedriver}/bin:$PATH"                                                                         
+           export PYTHONPATH="$PYTHONPATH:${self}"                                                                                         
+           exec ${pythonEnv}/bin/python ${self}/fetch_url.py "$@"                                                                          
+           exec ${pythonEnv}/bin/python ${self}/fetch_url.py "$@"                                                                          
+         ''                                                                                                                                
+        ) {};                                                                                                                               
+      };                                                                                                                                    
+    };       
 }
